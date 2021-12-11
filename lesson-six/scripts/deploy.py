@@ -23,18 +23,7 @@ def deploy_fund_me():
     )
     print(f"FundMe address: {fund_me.address}")
 
-    # storage_factory = StorageFactory.deploy({"from": account})
-    # # this makes the rpc shell error
-    # new_contract = storage_factory.createSimpleStorageContract({"from": account})
-    # new_contract.wait(1)
-
-    # print(f"simple storage {storage_factory.simpleStorages(0)}")
-
-    # store_tx = storage_factory.sfStoreFavoriteNumber(0, 42)
-    # store_tx.wait(1)
-
-    # stored_number = storage_factory.sfReadFavoriteNumber(0)
-    # print(f"stored number: {stored_number}")
+    return fund_me
 
 
 def main():
