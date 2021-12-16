@@ -25,6 +25,8 @@ contract Lottery is VRFConsumerBase, Ownable {
     uint256 public vrfFee;
     bytes32 public keyhash;
 
+    event RequestedRandomness(bytes32 requestId);
+
     constructor(
         address _priceFeedAddress,
         address _vrfCoordinator,
@@ -74,6 +76,7 @@ contract Lottery is VRFConsumerBase, Ownable {
         lottery_state = LOTTERY_STATE.CALCULATING_WINNER;
         // first request the random number
         bytes32 requestId = requestRandomness(keyhash, vrfFee);
+        emit RequestedRandomness(requestId);
     }
 
     function fulfillRandomness(bytes32 requestId, uint256 _randomness)
@@ -83,8 +86,7 @@ contract Lottery is VRFConsumerBase, Ownable {
         // internal - only VRF coordinator can call this function
         require(
             lottery_state == LOTTERY_STATE.CALCULATING_WINNER,
-            "Lottery is ending"
-        );
+            "Lottery is ending"        );
         require(_randomness > 0, "random not found");
         random = _randomness;
         uint256 indexOfWinner = _randomness % players.length;
