@@ -45,17 +45,18 @@ def end_lottery():
     tx.wait(1)
 
     # end the lottery
-    tx = lottery.endLottery({"from": account})
-    tx.wait(1)
-    print(f"Lottery ended")
+    ending_tx = lottery.endLottery({"from": account})
+    ending_tx.wait(1)
 
     # wait for the chainlink random to be returned from a node (few blocks)
+    print(f"Lottery ending")
     time.sleep(60)
-    print(f"{lottery.winner()} won the lottery")
+    print(f"Ended: {lottery.winner()} won the lottery")
 
 
 def main():
     deploy_lottery()
+    # usually only deploy in the script, and call this functions from the terminal
     start_lottery()
     enter_lottery()
     end_lottery()
