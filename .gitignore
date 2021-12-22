@@ -1,1 +1,5 @@
 lesson-seven/.vscode
+__pycache__
+build
+lesson-eight/.env
+.vscode
