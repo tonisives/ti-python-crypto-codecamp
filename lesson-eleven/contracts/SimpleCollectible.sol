@@ -1,5 +1,11 @@
 // SPDX-License-Identifier: MIT
-// simple NFT
+
+/**
+ simple NFT
+ 1. We didnt upload image to IPFS
+ 2. Why is IPFS decentralized?
+ 3. Anyone can mint an NFT here - it is not scarce or random
+*/
 
 pragma solidity 0.6.6;
 
@@ -16,11 +22,15 @@ contract SimpleCollectible is ERC721 {
 
     // create a new NFT and assign it to the person who called the function
 
-    function createCollectible() public returns (uint256) {
+    function createCollectible(string memory tokenURI)
+        public
+        returns (uint256)
+    {
         // safemint adds count of tokens to addresses
         // safemint checks if tokenId has been used before or not
         uint256 newTokenId = tokenCounter;
         _safeMint(msg.sender, newTokenId);
+        _setTokenURI(newTokenId, tokenURI);
         tokenCounter++;
         return newTokenId;
     }
