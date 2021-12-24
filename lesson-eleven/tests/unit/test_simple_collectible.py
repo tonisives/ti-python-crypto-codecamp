@@ -1,5 +1,5 @@
 import pytest
-from scripts.deploy_and_create import deploy_and_create
+from scripts.simple_collectible.deploy_and_create import deploy_and_create
 from scripts.utils import LOCAL_BLOCKCHAIN_ENVIRONMENTS, get_account
 from brownie import network
 
