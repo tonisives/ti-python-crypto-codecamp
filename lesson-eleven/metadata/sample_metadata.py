@@ -1,6 +1,6 @@
 metadata_template = {
     "name": "",
     "description": "",
-    "imageURI": "",
+    "image": "",
     "attributes": [{"trait_type": "cuteness", "value": 100}],
 }

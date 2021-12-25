@@ -1,3 +1,5 @@
+import json
+import os
 from pathlib import Path
 from brownie import AdvancedCollectible, config, network
 
@@ -5,6 +7,13 @@ from scripts.utils import get_account, get_breed, get_contract
 from metadata.sample_metadata import metadata_template
 
 import requests
+
+breed_to_image_uri = {
+    "PUG": "https://ipfs.io/ipfs/QmSsYRx3LpDAb1GZQm7zZ1AuHZjfbPkD6J7s9r41xu1mf8?filename=pug.png",
+    "SHIBA_INU": "https://ipfs.io/ipfs/QmYx6GsYAKnNzZ9A6NvEKV9nf1VaDzJrqDR23Y8YSkebLU?filename=shiba-inu.png",
+    "ST_BERNARD": "https://ipfs.io/ipfs/QmUPjADFGEKmfohdTaNcWhp7VGk26h5jXDA7v3VtTnTLcW?filename=st-bernard.png",
+}
+
 
 def main():
     """
@@ -27,8 +36,18 @@ def main():
             collectible_metadata["name"] = breed
             collectible_metadata["description"] = f"An adorable {breed} pup!"
             image_path = "./img/" + breed.lower().replace("_", "-") + ".png"
-            image_uri = upload_to_ipfs(image_path)
-            collectible_metadata["imageURI"] = image_uri
+
+            image_uri = None
+            if os.getenv("UPLOAD_TO_IPFS") == "true":
+                image_uri = upload_to_ipfs(image_path)
+            image_uri = image_uri if image_uri else breed_to_image_uri[breed]
+
+            collectible_metadata["image"] = image_uri
+            with open(metadata_file_name, "w") as f:
+                json.dump(collectible_metadata, f)
+            print(f"{collectible_metadata}")
+            if os.getenv("UPLOAD_TO_IPFS") == "true":
+                upload_to_ipfs(metadata_file_name)
 
 
 def upload_to_ipfs(filepath):
@@ -41,12 +60,12 @@ def upload_to_ipfs(filepath):
         ipfs_url = "http://127.0.0.1:5001"
         # call post /add
         endpoint = "/api/v0/add"
-        response = requests.post(ipfs_url + endpoint, files={"file":image_binary})
+        response = requests.post(ipfs_url + endpoint, files={"file": image_binary})
         # response will be the hash of the file
         ipfs_hash = response.json()["Hash"]
-        # "./img/0-PUG.png" -> "0-PUG.png" 
+        # "./img/0-PUG.png" -> "0-PUG.png"
         filename = filepath.split("/")[-1:][0]
-        # https://ipfs.io/ipfs/Qmd9MCGtdVz2miNumBHDbvj8bigSgTwnr4SbyH6DNnpWdt?filename=0-PUG.png
         image_uri = f"https://ipfs.io/ipfs/{ipfs_hash}?filename={filename}"
+        print(f"response {response.json()}")
         print(image_uri)
         return image_uri
