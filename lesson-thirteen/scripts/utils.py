@@ -8,6 +8,7 @@ from brownie import (
     MockDAI,
     MockWETH,
 )
+import pytest
 from web3 import Web3
 
 NON_FORKED_LOCAL_BLOCKCHAIN_ENVIRONMENTS = ["hardhat", "development", "ganache"]
@@ -22,11 +23,10 @@ contract_to_mock = {
     "dai_usd_price_feed": MockV3Aggregator,
     "fau_token": MockDAI,
     "weth_token": MockWETH,
-
 }
 
 DECIMALS = 18
-INITIAL_VALUE = Web3.toWei(2000, "ether")
+MOCK_PRICE_FEED_VALUE = Web3.toWei(2000, "ether")
 
 
 def get_account(index=None, id=None):
@@ -37,6 +37,10 @@ def get_account(index=None, id=None):
     if id:
         return accounts.load(id)
     return accounts.add(config["wallets"]["from_key"])
+
+def only_local():
+    if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
+        pytest.skip("Can only test on local networks")
 
 
 def get_contract(contract_name):
@@ -91,7 +95,7 @@ def fund_with_link(
     return tx
 
 
-def deploy_mocks(decimals=DECIMALS, initial_value=INITIAL_VALUE):
+def deploy_mocks(decimals=DECIMALS, initial_value=MOCK_PRICE_FEED_VALUE):
     """
     Use this script if you want to deploy mocks to a testnet
     """
