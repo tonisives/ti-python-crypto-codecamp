@@ -73,7 +73,7 @@ contract TokenFarm is Ownable {
         return false;
     }
 
-    function setPriceFeedContrat(address _token, address _priceFeed)
+    function setPriceFeedContract(address _token, address _priceFeed)
         public
         onlyOwner
     {
