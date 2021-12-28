@@ -40,13 +40,13 @@ contract TokenFarm is Ownable {
         Our contract doesnt own the tokens and we call transferFrom. The owner of transferFrom wallet needs to approve the tokens first.
          */
         IERC20(_token).transferFrom(msg.sender, address(this), _amount);
+        bool addedUniqueToken = updateUniqueTokensStaked(msg.sender, _token);
 
         stakingBalance[_token][msg.sender] =
             stakingBalance[_token][msg.sender] +
             _amount;
 
-        bool addedNewToken = updateUniqueTokensStaked(msg.sender, _token);
-        if (addedNewToken && uniqueTokensStaked[msg.sender] == 1) {
+        if (addedUniqueToken && uniqueTokensStaked[msg.sender] == 1) {
             // this was the f irst unique token staked for the user
             stakers.push(msg.sender);
         }
