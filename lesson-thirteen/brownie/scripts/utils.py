@@ -1,3 +1,4 @@
+import os
 from brownie import (
     network,
     accounts,
@@ -37,6 +38,7 @@ def get_account(index=None, id=None):
     if id:
         return accounts.load(id)
     return accounts.add(config["wallets"]["from_key"])
+
 
 def only_local():
     if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
@@ -109,10 +111,25 @@ def deploy_mocks(decimals=DECIMALS, initial_value=MOCK_PRICE_FEED_VALUE):
         decimals, initial_value, {"from": account}
     )
     print(f"Deployed to {mock_price_feed.address}")
-    
+
     print("Deploying Mock DAI Token...")
-    dai_token = MockDAI.deploy({"from": account})    
+    dai_token = MockDAI.deploy({"from": account})
     print("Deploying Mock WETH Token...")
     weth_token = MockWETH.deploy({"from": account})
 
     print("Mocks Deployed!")
+
+
+def getParent(path: str, levels=1) -> str:
+    """
+    @param path: starts without /
+    @return: Parent path at the specified levels above.
+    """
+    current_directory = os.path.dirname(__file__)
+
+    parent_directory = current_directory
+    for i in range(0, levels):
+        parent_directory = os.path.split(parent_directory)[0]
+
+    file_path = os.path.join(parent_directory, path)
+    return file_path

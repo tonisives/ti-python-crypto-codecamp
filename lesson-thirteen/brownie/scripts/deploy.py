@@ -1,10 +1,13 @@
-from scripts.utils import get_account, get_contract
+import json
+import os
+from scripts.utils import get_account, get_contract, getParent
 from brownie import DappToken, TokenFarm, network, config
+import yaml
 
 DAPP_TOKEN_KEPT_BALANCE = 100 * 10 ** 18
 
 
-def deploy_token_farm_and_dapp_token():
+def deploy_token_farm_and_dapp_token(front_end_update=False):
     account = get_account()
     dapp_token = DappToken.deploy({"from": account})
     token_farm = TokenFarm.deploy(
@@ -30,6 +33,8 @@ def deploy_token_farm_and_dapp_token():
         weth_token: get_contract("eth_usd_price_feed"),
     }
     add_allowed_tokens(token_farm, allowed_tokens, account)
+    if front_end_update:
+        front_end_update()
     return token_farm, dapp_token
 
 
@@ -49,5 +54,19 @@ def add_allowed_tokens(token_farm, allowed_tokens: dict, account):
     return token_farm
 
 
+def update_front_end():
+    # push contract addresses to front end
+    # send brownie-config to front-end/src
+    # send build forlder (with contract addresses) to front end
+    with open("brownie-config.yaml", "r") as brownie_config:
+        config_dict = yaml.load(brownie_config, Loader=yaml.FullLoader)
+
+        with open(
+            getParent("front_end/src/brownie-config.json", 2), "w+"
+        ) as brownie_config_json:
+            json.dump(config_dict, brownie_config_json)
+    print("front end updated")
+
+
 def main():
-    deploy_token_farm_and_dapp_token()
+    deploy_token_farm_and_dapp_token(front_end_update=True)
