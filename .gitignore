@@ -4,3 +4,4 @@ build
 lesson-eight/.env
 .vscode
 lesson-thirteen/front_end/yarn.lock
+lesson-thirteen/front_end/package-lock.json

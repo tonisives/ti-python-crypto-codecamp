@@ -5,6 +5,17 @@ import brownieConfig from "../brownie-config.json"
 import networkMapping from "../chain-info/deployments/map.json"
 import { constants } from "ethers"
 
+import dapp from "../res/dapp.png"
+import dai from "../res/dai.png"
+import eth from "../res/eth.png"
+import { YourWallet } from "./yourWallet/YourWallet"
+
+export type Token = {
+    image: string
+    address: string
+    name: string
+}
+
 export const Main = () => {
     // Show token values from the wallet
     // Get the address of different tokens
@@ -19,11 +30,27 @@ export const Main = () => {
     const dappTokenAddress = chainId ? networkMapping[String(chainId)]["DappToken"]
     [0] : constants.AddressZero
     const wethTokenAddress = chainId ? brownieConfig["networks"][networkName]["weth_token"] : constants.AddressZero
-    const fauTokenAddress = chainId ? brownieConfig["networks"][networkName]["fau_token"] : constants.AddressZero
-    const daiTokenAddress = chainId ? brownieConfig["networks"][networkName]["dai_token"] : constants.AddressZero
-     
+    const daiTokenAddress = chainId ? brownieConfig["networks"][networkName]["fau_token"] : constants.AddressZero
+
+    const supportedTokens: Array<Token> = [
+        {
+            image: dapp,
+            address: dappTokenAddress,
+            name: "DAPP"
+        },
+        {
+            image: dai,
+            address: daiTokenAddress,
+            name: "DAI"
+        },
+        {
+            image: eth,
+            address: wethTokenAddress,
+            name: "WETH"
+        }
+    ]
 
     return (
-        <div>Hi!</div>
+        <YourWallet supportedTokens={supportedTokens} />
     )
 }
