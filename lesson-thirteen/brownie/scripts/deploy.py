@@ -1,5 +1,6 @@
 import json
 import os
+import shutil
 from scripts.utils import get_account, get_contract, getParent
 from brownie import DappToken, TokenFarm, network, config
 import yaml
@@ -65,8 +66,16 @@ def update_front_end():
             getParent("front_end/src/brownie-config.json", 2), "w+"
         ) as brownie_config_json:
             json.dump(config_dict, brownie_config_json)
+    
+    copy_folders_to_front_end("./build", getParent("front_end/src/chain-info", 2))
+
     print("front end updated")
 
+def copy_folders_to_front_end(src, dst):
+    if os.path.exists(dst):
+        # kill everything in the folder
+        shutil.rmtree(dst)
+    shutil.copytree(src, dst)
 
 def main():
     deploy_token_farm_and_dapp_token(front_end_update=True)
