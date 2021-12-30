@@ -5,3 +5,4 @@ lesson-eight/.env
 .vscode
 lesson-thirteen/front_end/yarn.lock
 lesson-thirteen/front_end/package-lock.json
+lesson-thirteen/front_end/src/chain-info
