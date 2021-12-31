@@ -1,7 +1,8 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import ReactDOM from "react-dom";
-import { Button, createTheme, CssBaseline, FormControlLabel, FormGroup, Switch, ThemeProvider } from "@material-ui/core";
+import { createTheme, CssBaseline, ThemeProvider } from "@material-ui/core";
 import App from "./App";
+import './index.css';
 
 const themeLight = createTheme({
   palette: {

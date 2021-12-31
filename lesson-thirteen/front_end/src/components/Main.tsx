@@ -9,6 +9,7 @@ import dapp from "../res/dapp.png"
 import dai from "../res/dai.png"
 import eth from "../res/eth.png"
 import { YourWallet } from "./yourWallet/YourWallet"
+import { Box } from "@material-ui/core"
 
 export type Token = {
     image: string
@@ -51,6 +52,8 @@ export const Main = () => {
     ]
 
     return (
-        <YourWallet supportedTokens={supportedTokens} />
+        <Box>
+            <YourWallet supportedTokens={supportedTokens} />
+        </Box>
     )
 }

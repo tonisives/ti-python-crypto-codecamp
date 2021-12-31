@@ -1,18 +1,8 @@
 import { useEthers } from "@usedapp/core"
-import { Button, FormControlLabel, makeStyles, Switch } from "@material-ui/core"
+import { Box, Button, FormControlLabel, Switch } from "@material-ui/core"
 import { AppProps } from ".."
 
-const useStyles = makeStyles(theme => ({
-    container: {
-        padding: theme.spacing(2),
-        display: "flex",
-        justifyContent: "flex-end",
-        gap: theme.spacing(1)
-    }
-}))
-
 export const Header: React.FC<AppProps<boolean>> = ({ theme }) => {
-    const classes = useStyles()
     // variable
     const { account, activateBrowserWallet, deactivate } = useEthers();
 
@@ -21,12 +11,13 @@ export const Header: React.FC<AppProps<boolean>> = ({ theme }) => {
 
     // connect/disconnect button
     return (
-        <div className={classes.container}>
-            <div>
-                <FormControlLabel control={
-                    <Switch checked={theme[0]} onChange={() => theme[1](!theme[0])} />
-                } label="Dark theme" />
-
+        <Box
+            sx={{ justifyContent: 'space-between', p: 3 }}
+            display="flex"
+            alignItems="center"
+            flexDirection="row">
+            <h1>Dapp app</h1>
+            <Box display="flex" flexDirection="column">
                 {isConnected ? (
                     <Button color="primary" variant="contained"
                         onClick={deactivate}>
@@ -39,7 +30,12 @@ export const Header: React.FC<AppProps<boolean>> = ({ theme }) => {
                     </Button>
                 )
                 }
-            </div>
-        </div>
+
+                <FormControlLabel control={
+                    <Switch checked={theme[0]} onChange={() => theme[1](!theme[0])} />
+                } label="Dark theme" />
+
+            </Box>
+        </Box>
     )
 } 

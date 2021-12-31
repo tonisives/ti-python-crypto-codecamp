@@ -1,8 +1,7 @@
-import { ChainId, DAppProvider, Rinkeby, Kovan } from '@usedapp/core';
+import { DAppProvider, Kovan } from '@usedapp/core';
 import { Header } from './components/Header';
-import { Container, FormControlLabel, makeStyles, Switch } from '@material-ui/core';
+import { Container } from '@material-ui/core';
 import { Main } from './components/Main';
-import { Dispatch, SetStateAction } from 'react';
 import { AppProps } from '.';
 
 const App: React.FC<AppProps<boolean>> = ({ theme }) => {

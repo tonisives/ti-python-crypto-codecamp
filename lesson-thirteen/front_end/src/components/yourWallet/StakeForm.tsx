@@ -1,4 +1,4 @@
-import { Button, CircularProgress, Input } from "@material-ui/core"
+import { Box, Button, CircularProgress, Input } from "@material-ui/core"
 import { useEthers, useNotifications, useTokenBalance } from "@usedapp/core"
 import { utils } from "ethers"
 import { formatUnits } from "ethers/lib/utils"
@@ -55,17 +55,20 @@ export const StakeForm = ({ token }: StakeFormProps) => {
 
     }, [notifications])
 
-    return (<div>
-        <>
-            <Input onChange={handleInputChange} />
+    return (
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }} >
+            <Input style={{ width: 200 }} onChange={handleInputChange} />
+            <Box m={1} />
             <Button
+                style={{ width: 200 }}
                 onClick={handleStakeClick}
                 color="primary"
                 size="large"
                 variant="contained"
                 disabled={isMining}>
+
                 {isMining ? <CircularProgress size={26} /> : "Stake"}
             </Button>
-        </>
-    </div>)
+        </Box>
+    )
 }
