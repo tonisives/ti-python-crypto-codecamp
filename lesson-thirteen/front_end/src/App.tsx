@@ -1,17 +1,19 @@
 import { ChainId, DAppProvider, Rinkeby, Kovan } from '@usedapp/core';
 import { Header } from './components/Header';
-import { Container, makeStyles } from '@material-ui/core';
+import { Container, FormControlLabel, makeStyles, Switch } from '@material-ui/core';
 import { Main } from './components/Main';
-import './App.css';
+import { Dispatch, SetStateAction } from 'react';
+import { AppProps } from '.';
 
-function App() {
+// function App({ changeTheme }: AppProps) {
+const App: React.FC<AppProps<boolean>> = ({ theme }) => {
   return (
     // App css might not be necessary
-    <div className="App">
+    <div>
       <DAppProvider config={{
         networks: [Kovan],
       }}>
-        <Header />
+        <Header theme={theme} />
         <Container maxWidth="md">
           <Main />
         </Container>

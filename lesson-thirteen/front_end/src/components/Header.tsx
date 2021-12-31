@@ -1,5 +1,6 @@
 import { useEthers } from "@usedapp/core"
-import { Button, makeStyles } from "@material-ui/core"
+import { Button, FormControlLabel, makeStyles, Switch } from "@material-ui/core"
+import { AppProps } from ".."
 
 const useStyles = makeStyles(theme => ({
     container: {
@@ -10,7 +11,7 @@ const useStyles = makeStyles(theme => ({
     }
 }))
 
-export const Header = () => {
+export const Header: React.FC<AppProps<boolean>> = ({ theme }) => {
     const classes = useStyles()
     // variable
     const { account, activateBrowserWallet, deactivate } = useEthers();
@@ -22,6 +23,10 @@ export const Header = () => {
     return (
         <div className={classes.container}>
             <div>
+                <FormControlLabel control={
+                    <Switch checked={theme[0]} onChange={() => theme[1](!theme[0])} />
+                } label="Dark theme" />
+
                 {isConnected ? (
                     <Button color="primary" variant="contained"
                         onClick={deactivate}>
