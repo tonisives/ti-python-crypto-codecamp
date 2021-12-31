@@ -1,9 +1,9 @@
-import { Button, Input } from "@material-ui/core"
-import { useEthers, useTokenBalance } from "@usedapp/core"
+import { Button, CircularProgress, Input } from "@material-ui/core"
+import { useEthers, useNotifications, useTokenBalance } from "@usedapp/core"
 import { utils } from "ethers"
 import { formatUnits } from "ethers/lib/utils"
-import { useState } from "react"
-import { useStakeTokens } from "../../hooks/useStakeTokens"
+import { useEffect, useState } from "react"
+import { approveTxName, stakeTxName, useStakeTokens } from "../../hooks/useStakeTokens"
 import { Token } from "../Main"
 
 interface StakeFormProps {
@@ -16,6 +16,8 @@ export const StakeForm = ({ token }: StakeFormProps) => {
     const tokenBalance = useTokenBalance(tokenAddress, account)
     const formattedTokenBalance = tokenBalance ? parseFloat(formatUnits(tokenBalance, 18)) : 0
     const [amount, setAmount] = useState<number | string | Array<number | string>>(0)
+    const { notifications } = useNotifications()
+
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newAmount = event.target.value === "" ? "" : Number(event.target.value)
@@ -23,7 +25,8 @@ export const StakeForm = ({ token }: StakeFormProps) => {
         console.log(newAmount)
     }
 
-    const { approveAndStake, approveErc20State } = useStakeTokens(tokenAddress)
+    const { approveAndStake, state } = useStakeTokens(tokenAddress)
+    const isMining = state.status === "Mining"
 
     const handleStakeClick = () => {
         /**
@@ -35,10 +38,34 @@ export const StakeForm = ({ token }: StakeFormProps) => {
         return approveAndStake(amountAsWei.toString())
     }
 
+    // useEffect when something changes with the contract notification
+    useEffect(() => {
+        // follow approve erc20 and tx succeded
+        if (notifications.filter((notification) =>
+            notification.type === "transactionSucceed" &&
+            notification.transactionName === approveTxName).length > 0) {
+            console.log("approved")
+        }
+
+        if (notifications.filter((notification) =>
+            notification.type === "transactionSucceed" &&
+            notification.transactionName === stakeTxName).length > 0) {
+            console.log("tokens staked")
+        }
+
+    }, [notifications])
+
     return (<div>
         <>
             <Input onChange={handleInputChange} />
-            <Button onClick={handleStakeClick} color="primary" size="large" variant="contained">Stake</Button>
+            <Button
+                onClick={handleStakeClick}
+                color="primary"
+                size="large"
+                variant="contained"
+                disabled={isMining}>
+                {isMining ? <CircularProgress size={26} /> : "Stake"}
+            </Button>
         </>
     </div>)
 }
