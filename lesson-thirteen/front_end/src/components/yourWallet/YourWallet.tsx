@@ -40,7 +40,6 @@ export const YourWallet = ({ supportedTokens }: YourWalletProps) => {
                     )
                 })}
             </TabContext>
-
         </Box>
     )
 }

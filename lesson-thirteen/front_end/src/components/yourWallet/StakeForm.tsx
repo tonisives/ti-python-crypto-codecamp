@@ -23,7 +23,7 @@ export const StakeForm = ({ token }: StakeFormProps) => {
         console.log(newAmount)
     }
 
-    const { approve, approveErc20State } = useStakeTokens(tokenAddress)
+    const { approveAndStake, approveErc20State } = useStakeTokens(tokenAddress)
 
     const handleStakeClick = () => {
         /**
@@ -32,9 +32,8 @@ export const StakeForm = ({ token }: StakeFormProps) => {
          * call these automatically in order
          */
         const amountAsWei = utils.parseEther(amount.toString())
-        return approve(amountAsWei.toString())
+        return approveAndStake(amountAsWei.toString())
     }
-
 
     return (<div>
         <>

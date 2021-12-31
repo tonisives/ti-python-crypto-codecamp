@@ -41,7 +41,7 @@ export const Main = () => {
         {
             image: dai,
             address: daiTokenAddress,
-            name: "DAI"
+            name: "FAU"
         },
         {
             image: eth,
