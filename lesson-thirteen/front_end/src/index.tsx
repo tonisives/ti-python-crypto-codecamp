@@ -7,7 +7,8 @@ import './index.css';
 const themeLight = createTheme({
   palette: {
     background: {
-      default: "#e4f0e2"
+      default: "#e4f0e2",
+      paper: "#ffffff"
     }
   }
 });
@@ -15,7 +16,8 @@ const themeLight = createTheme({
 const themeDark = createTheme({
   palette: {
     background: {
-      default: "#222222"
+      default: "#222222",
+      paper: "#333333"
     },
     text: {
       primary: "#ffffff"

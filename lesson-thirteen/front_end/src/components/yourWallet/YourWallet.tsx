@@ -23,6 +23,9 @@ export const YourWallet = ({ supportedTokens }: YourWalletProps) => {
             display="flex"
             flexDirection="column"
             alignItems="center"
+            bgcolor="background.paper"
+            borderRadius="25px"
+            boxShadow="5"
         >
 
             <h2>Stake tokens</h2>
