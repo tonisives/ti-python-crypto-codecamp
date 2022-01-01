@@ -1,4 +1,5 @@
-import { Box, Button, CircularProgress, Input } from "@material-ui/core"
+import { Box, Button, CircularProgress, Input, Snackbar } from "@material-ui/core"
+import { Alert } from "@material-ui/lab"
 import { useEthers, useNotifications, useTokenBalance } from "@usedapp/core"
 import { utils } from "ethers"
 import { formatUnits } from "ethers/lib/utils"
@@ -27,6 +28,13 @@ export const StakeForm = ({ token }: StakeFormProps) => {
 
     const { approveAndStake, state } = useStakeTokens(tokenAddress)
     const isMining = state.status === "Mining"
+    const [showErc20ApprovalSuccess, setShowErc20ApprovalSuccess] = useState(false)
+    const [showStakeTokenSuccess, setStakeTokenSuccess] = useState(false)
+
+    const handleCloseSnack = () => {
+        setShowErc20ApprovalSuccess(false)
+        setStakeTokenSuccess(false)
+    }
 
     const handleStakeClick = () => {
         /**
@@ -44,31 +52,53 @@ export const StakeForm = ({ token }: StakeFormProps) => {
         if (notifications.filter((notification) =>
             notification.type === "transactionSucceed" &&
             notification.transactionName === approveTxName).length > 0) {
-            console.log("approved")
+            setShowErc20ApprovalSuccess(true)
+            setStakeTokenSuccess(false)
         }
 
         if (notifications.filter((notification) =>
             notification.type === "transactionSucceed" &&
             notification.transactionName === stakeTxName).length > 0) {
-            console.log("tokens staked")
+            setShowErc20ApprovalSuccess(false)
+            setStakeTokenSuccess(true)
         }
 
-    }, [notifications])
+    }, [notifications, showErc20ApprovalSuccess, showStakeTokenSuccess])
 
     return (
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }} >
-            <Input style={{ width: 200 }} onChange={handleInputChange} />
-            <Box m={1} />
-            <Button
-                style={{ width: 200 }}
-                onClick={handleStakeClick}
-                color="primary"
-                size="large"
-                variant="contained"
-                disabled={isMining}>
+        <Box>
 
-                {isMining ? <CircularProgress size={26} /> : "Stake"}
-            </Button>
+            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }} >
+                <Input style={{ width: 200 }} onChange={handleInputChange} />
+                <Box m={1} />
+                <Button
+                    style={{ width: 200 }}
+                    onClick={handleStakeClick}
+                    color="primary"
+                    size="large"
+                    variant="contained"
+                    disabled={isMining}>
+
+                    {isMining ? <CircularProgress size={26} /> : "Stake"}
+                </Button>
+            </Box>
+            <Snackbar
+                open={showErc20ApprovalSuccess}
+                autoHideDuration={5000}
+                onClose={handleCloseSnack}>
+                <Alert onClose={handleCloseSnack} severity="success">
+                    ERC-20 token transfer approved! Now approve the second transaction.
+                </Alert>
+            </Snackbar>
+
+            <Snackbar
+                open={showStakeTokenSuccess}
+                autoHideDuration={5000}
+                onClose={handleCloseSnack}>
+                <Alert onClose={handleCloseSnack} severity="success">
+                    Tokens staked!
+                </Alert>
+            </Snackbar>
         </Box>
     )
 }
