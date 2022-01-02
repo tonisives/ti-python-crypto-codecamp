@@ -48,17 +48,16 @@ export const useStakeTokens = (tokenAddress: string) => {
         else {
             // dont need to approve
             approveState.status = "Success"
-            stakeSend(amountToStake, tokenAddress)
         }
     }
 
     useEffect(() => {
         if (approveState.status === "Success") {
+            approveState.status = "None"
             // stake
             console.log("Approved ERC20 transfer")
             // stakeTokens(uint256 _amount, address _token)
             stakeSend(amountToStake, tokenAddress)
-            approveState.status = "None"
         }
 
         // if anything in this array changes, it will kick off the useEffect

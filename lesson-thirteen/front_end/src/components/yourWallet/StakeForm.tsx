@@ -24,18 +24,15 @@ export const StakeForm = ({ token }: StakeFormProps) => {
     const isMining = state.status === "Mining"
     const [showErc20ApprovalSuccess, setShowErc20ApprovalSuccess] = useState(false)
     const [showStakeTokenSuccess, setStakeTokenSuccess] = useState(false)
+    const [showError, setShowError] = useState(false)
 
     const handleCloseSnack = () => {
         setShowErc20ApprovalSuccess(false)
         setStakeTokenSuccess(false)
+        setShowError(false)
     }
 
     const handleStakeClick = () => {
-        /**
-         * - approve the tokens 
-         * - call TokenFarm.sol function stakeTokens(uint256 _amount, address _token)
-         * call these automatically in order
-         */
         const amountAsWei = utils.parseEther(amount.toString())
         return approveAndStake(amountAsWei)
     }
@@ -48,6 +45,7 @@ export const StakeForm = ({ token }: StakeFormProps) => {
             notification.transactionName === approveTxName).length > 0) {
             setShowErc20ApprovalSuccess(true)
             setStakeTokenSuccess(false)
+            setShowError(false)
         }
 
         if (notifications.filter((notification) =>
@@ -55,6 +53,17 @@ export const StakeForm = ({ token }: StakeFormProps) => {
             notification.transactionName === stakeTxName).length > 0) {
             setShowErc20ApprovalSuccess(false)
             setStakeTokenSuccess(true)
+            setShowError(false)
+        }
+
+        if (notifications.filter((notification) =>
+            notification.type === "transactionFailed" &&
+            (notification.transactionName === stakeTxName ||
+                notification.transactionName === approveTxName)).length > 0
+        ) {
+            setShowErc20ApprovalSuccess(false)
+            setStakeTokenSuccess(false)
+            setShowError(true)
         }
 
     }, [notifications, showErc20ApprovalSuccess, showStakeTokenSuccess])
@@ -90,6 +99,15 @@ export const StakeForm = ({ token }: StakeFormProps) => {
                 onClose={handleCloseSnack}>
                 <Alert onClose={handleCloseSnack} severity="success">
                     Tokens staked!
+                </Alert>
+            </Snackbar>
+
+            <Snackbar
+                open={showError}
+                autoHideDuration={5000}
+                onClose={handleCloseSnack}>
+                <Alert onClose={handleCloseSnack} severity="error">
+                    Transaction error!
                 </Alert>
             </Snackbar>
         </Box>
