@@ -1,8 +1,7 @@
 import { Box, Button, CircularProgress, Input, Snackbar } from "@material-ui/core"
 import { Alert } from "@material-ui/lab"
-import { useEthers, useNotifications, useTokenBalance } from "@usedapp/core"
+import { useNotifications } from "@usedapp/core"
 import { utils } from "ethers"
-import { formatUnits } from "ethers/lib/utils"
 import { useEffect, useState } from "react"
 import { approveTxName, stakeTxName, useStakeTokens } from "../../hooks/useStakeTokens"
 import { Token } from "../Main"
@@ -13,17 +12,12 @@ interface StakeFormProps {
 
 export const StakeForm = ({ token }: StakeFormProps) => {
     const { address: tokenAddress, name } = token
-    const { account } = useEthers()
-    const tokenBalance = useTokenBalance(tokenAddress, account)
-    const formattedTokenBalance = tokenBalance ? parseFloat(formatUnits(tokenBalance, 18)) : 0
     const [amount, setAmount] = useState<number | string | Array<number | string>>(0)
     const { notifications } = useNotifications()
-
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newAmount = event.target.value === "" ? "" : Number(event.target.value)
         setAmount(newAmount)
-        console.log(newAmount)
     }
 
     const { approveAndStake, state } = useStakeTokens(tokenAddress)
@@ -43,7 +37,7 @@ export const StakeForm = ({ token }: StakeFormProps) => {
          * call these automatically in order
          */
         const amountAsWei = utils.parseEther(amount.toString())
-        return approveAndStake(amountAsWei.toString())
+        return approveAndStake(amountAsWei)
     }
 
     // useEffect when something changes with the contract notification
@@ -67,7 +61,6 @@ export const StakeForm = ({ token }: StakeFormProps) => {
 
     return (
         <Box>
-
             <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }} >
                 <Input style={{ width: 200 }} onChange={handleInputChange} />
                 <Box m={1} />

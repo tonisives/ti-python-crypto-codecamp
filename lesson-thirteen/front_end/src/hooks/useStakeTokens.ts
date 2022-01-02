@@ -1,5 +1,5 @@
-import { useContractFunction, useEthers } from "@usedapp/core"
-import { constants, Contract, utils } from "ethers"
+import { useContractFunction, useEthers, useTokenAllowance } from "@usedapp/core"
+import { BigNumber, constants, Contract, utils } from "ethers"
 import TokenFarm from "../chain-info/contracts/TokenFarm.json"
 import ERC20 from "../chain-info/contracts/RandomERC20.json"
 import networkMapping from "../chain-info/deployments/map.json"
@@ -7,15 +7,18 @@ import { useEffect, useState } from "react"
 
 export const approveTxName = "Approve ERC20 transfer"
 export const stakeTxName = "Stake tokens"
+export const maxAllowance = constants.MaxUint256
 
+/**
+ * Approve tokens if not already approved and the stake the tokens
+ * @param tokenAddress 
+ * @returns 
+ */
 export const useStakeTokens = (tokenAddress: string) => {
-    // approve
-    // address, abi, chainId
-    const { chainId } = useEthers()
+    const { chainId, account } = useEthers()
     const { abi } = TokenFarm
     const tokenFarmAddress = chainId ? networkMapping[String(chainId)]["TokenFarm"][0] : constants.AddressZero
     const tokenFarmInterface = new utils.Interface(abi)
-    // https://youtu.be/M576WGiDBdQ?t=56124
     const tokenFarmContract = new Contract(tokenFarmAddress, tokenFarmInterface)
 
     // any erc20 child is fine for the abi
@@ -23,22 +26,9 @@ export const useStakeTokens = (tokenAddress: string) => {
     const erc20Interface = new utils.Interface(erc20Abi)
     const erc20Contract = new Contract(tokenAddress, erc20Interface)
 
-    /**
-     * useContractFunction
-    Hook returns an object with three variables: state , send and events.
-     */
-    // state is status of the transaction, send is the function we can call. send can have any number of arguments that are passed to the contract.
-    const { send: approveErc20Send, state: approveAndStakeErc20State } = useContractFunction(
+    const { send: approveSend, state: approveState } = useContractFunction(
         erc20Contract, "approve", { transactionName: approveTxName }
     )
-
-    // listen for the approved amount
-    const [amountToStake, setAmountToStake] = useState("0")
-
-    const approveAndStake = (amount: string) => {
-        setAmountToStake(amount)
-        return approveErc20Send(tokenFarmAddress, amount)
-    }
 
     const { send: stakeSend, state: stakeState } = useContractFunction(
         tokenFarmContract,
@@ -46,34 +36,44 @@ export const useStakeTokens = (tokenAddress: string) => {
         { transactionName: stakeTxName }
     )
 
-    // useEffect - do something after variable has changed.
-    // TODO: there should be a loading spinner between approve and stake
+    // listen for the approved amount
+    const [amountToStake, setAmountToStake] = useState(BigNumber.from(0))
+    const allowance = useTokenAllowance(tokenAddress, account ?? "0", tokenFarmAddress)
+
+    const approveAndStake = (amount: BigNumber = maxAllowance) => {
+        setAmountToStake(amount)
+        if (allowance?.lt(amount)) {
+            approveSend(tokenFarmAddress, maxAllowance.toString())
+        }
+        else {
+            // dont need to approve
+            approveState.status = "Success"
+            stakeSend(amountToStake, tokenAddress)
+        }
+    }
+
     useEffect(() => {
-        if (approveAndStakeErc20State.status === "Success") {
+        if (approveState.status === "Success") {
             // stake
             console.log("Approved ERC20 transfer")
-
             // stakeTokens(uint256 _amount, address _token)
             stakeSend(amountToStake, tokenAddress)
-
-
+            approveState.status = "None"
         }
 
         // if anything in this array changes, it will kick off the useEffect
-    }, [approveAndStakeErc20State, amountToStake, tokenAddress])
-
+    }, [approveState, amountToStake, tokenAddress])
 
     // follow both approve and stake states
-    const [state, setState] = useState(approveAndStakeErc20State)
-
+    const [state, setState] = useState(approveState)
     useEffect(() => {
-        if (approveAndStakeErc20State.status === "Success") {
+        if (approveState.status === "Success") {
             setState(stakeState)
         } else {
-            setState(approveAndStakeErc20State)
+            setState(approveState)
         }
 
-    }, [approveAndStakeErc20State, stakeState])
+    }, [approveState, stakeState])
 
     // return the approve function, so it can be called with the amount from the StakeForm
     return { approveAndStake, state }
