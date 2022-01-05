@@ -5,6 +5,7 @@ import { utils } from "ethers"
 import { useEffect, useState } from "react"
 import { approveTxName, stakeTxName, useStakeTokens } from "../../hooks/useStakeTokens"
 import { Token } from "../Main"
+import { WalletBalance } from "./WalletBalance"
 
 interface StakeFormProps {
     token: Token
@@ -69,7 +70,13 @@ export const StakeForm = ({ token }: StakeFormProps) => {
     }, [notifications, showErc20ApprovalSuccess, showStakeTokenSuccess])
 
     return (
-        <Box>
+        <Box display="flex" justify-content="space-between" flexDirection="column">
+            <Box
+                display="flex"
+                justifyContent="center"
+                flex="1">
+                <WalletBalance token={token} labelString={"Wallet balance:"} />
+            </Box>
             <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }} >
                 <Input style={{ width: 200 }} onChange={handleInputChange} />
                 <Box m={1} />

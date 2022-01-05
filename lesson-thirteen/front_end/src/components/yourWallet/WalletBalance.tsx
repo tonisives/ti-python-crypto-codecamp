@@ -5,17 +5,16 @@ import { BalanceMsg } from "../BalanceMsg"
 
 export interface WalletBalanceProps {
     token: Token,
+    labelString: string
 }
 
-
-export const WalletBalance = ({ token }: WalletBalanceProps) => {
-    const { image, address, name } = token
+export const WalletBalance = ({ token, labelString }: WalletBalanceProps) => {
+    const { address } = token
     const { account } = useEthers()
     const tokenBalance = useTokenBalance(address, account)
     const formattedBalance: number = tokenBalance ? parseFloat(formatUnits(tokenBalance, 18)) : 0
     return (<BalanceMsg
-        label={`Wallet ${name} balance:`}
-        tokenImage={image}
+        label={labelString}
         tokenBalance={formattedBalance}
     />)
 }

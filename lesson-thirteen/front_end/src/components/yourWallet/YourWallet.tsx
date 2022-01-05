@@ -1,4 +1,4 @@
-import { Box, Tab } from "@material-ui/core"
+import { Avatar, Box, Tab } from "@material-ui/core"
 import { TabContext, TabList, TabPanel } from "@material-ui/lab"
 import { useState } from "react"
 import { Token } from "../Main"
@@ -28,7 +28,6 @@ export const YourWallet = ({ supportedTokens }: YourWalletProps) => {
             borderRadius="25px"
             boxShadow="5"
         >
-
             <h2>Stake tokens</h2>
             <TabContext value={selectedTokenIndex.toString()}>
                 {/* list of tokens in the tab context */}
@@ -37,7 +36,8 @@ export const YourWallet = ({ supportedTokens }: YourWalletProps) => {
                         <Tab
                             label={token.name}
                             value={index.toString()}
-                            key={index} />
+                            key={index}
+                            icon={<Avatar src={token.image} />} />
                     ))}
                 </TabList>
                 {supportedTokens.map((token, index) => {
@@ -45,21 +45,12 @@ export const YourWallet = ({ supportedTokens }: YourWalletProps) => {
                         <TabPanel value={index.toString()} key={index}>
                             <Box
                                 display="flex"
-                                justifyContent="center"
-                                padding="20px" >
-                                <WalletBalance token={token} />
-                            </Box>
-                            <Box
-                                display="flex"
-                                padding="10px"
+                                padding="20px"
+                                height="250px"
                             >
-                                <Box pr="30px">
-                                    <Box margin="4" />
-                                    <StakeForm token={token} />
-                                </Box>
-                                <Box>
-                                    <UnstakeForm token={token} />
-                                </Box>
+                                <StakeForm token={token} />
+                                <Box pr="80px" />
+                                <UnstakeForm token={token} />
                             </Box>
                         </TabPanel>
                     )
