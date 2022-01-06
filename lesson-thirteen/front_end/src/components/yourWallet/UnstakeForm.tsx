@@ -75,7 +75,7 @@ export const UnstakeForm = ({ token }: UnstakeFormProps) => {
                 color="primary"
                 size="large"
                 variant="contained"
-                disabled={isMining}>
+                disabled={isMining || stakingBalance?.eq(0)}>
                 {isMining ? <CircularProgress size={26} /> : "unstake all"}
             </Button>
 

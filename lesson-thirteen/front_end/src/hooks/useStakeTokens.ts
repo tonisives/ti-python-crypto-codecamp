@@ -30,7 +30,7 @@ export const useStakeTokens = (tokenAddress: string) => {
         erc20Contract, "approve", { transactionName: approveTxName }
     )
 
-    const { send: stakeSend, state: stakeState } = useContractFunction(
+    const { send: stakeTokensSend, state: stakeState } = useContractFunction(
         tokenFarmContract,
         "stakeTokens",
         { transactionName: stakeTxName }
@@ -56,24 +56,13 @@ export const useStakeTokens = (tokenAddress: string) => {
             approveState.status = "None"
             // stake
             console.log("Approved ERC20 transfer")
-            // stakeTokens(uint256 _amount, address _token)
-            stakeSend(amountToStake, tokenAddress)
+            stakeTokensSend(amountToStake, tokenAddress)
+            console.log(stakeState.status)
         }
 
         // if anything in this array changes, it will kick off the useEffect
     }, [approveState, amountToStake, tokenAddress])
 
-    // follow both approve and stake states
-    const [state, setState] = useState(approveState)
-    useEffect(() => {
-        if (approveState.status === "Success") {
-            setState(stakeState)
-        } else {
-            setState(approveState)
-        }
-
-    }, [approveState, stakeState])
-
     // return the approve function, so it can be called with the amount from the StakeForm
-    return { approveAndStake, state }
+    return { approveAndStake, approveState, stakeState }
 } 

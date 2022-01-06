@@ -21,8 +21,9 @@ export const StakeForm = ({ token }: StakeFormProps) => {
         setAmount(newAmount)
     }
 
-    const { approveAndStake, state } = useStakeTokens(tokenAddress)
-    const isMining = state.status === "Mining"
+    const { approveAndStake, stakeState, approveState } = useStakeTokens(tokenAddress)
+
+    const isMining = stakeState.status === "Mining" || approveState.status === "Mining"
     const [showErc20ApprovalSuccess, setShowErc20ApprovalSuccess] = useState(false)
     const [showStakeTokenSuccess, setStakeTokenSuccess] = useState(false)
     const [showError, setShowError] = useState(false)
